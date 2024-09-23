@@ -19,13 +19,13 @@ namespace AGROCHEM.Controllers
             if (ModelState.IsValid)
             {
                 string result = await _userService.RegisterUser(user);
-                if (result== "Użytkownik został dodany.")
+                if (result == "Użytkownik został dodany.")
                 {
-                    return Ok(result);
+                    return Ok(new {message = result});
                 }
                 else
                 {
-                    return BadRequest(result);
+                    return BadRequest(new { message = result });
                 }              
             }
             return BadRequest(new { message = "Wystąpił błąd w rejestracji." });
