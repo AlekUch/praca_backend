@@ -1,0 +1,25 @@
+.vs/
+*.vcxproj.user
+*.vcxproj.filters
+
+# Katalogi i pliki binarne .NET
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.cache
+
+# Pliki tymczasowe Visual Studio
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Ustawienia systemowe
+*.log
+.vscode/
+
+*.vsidx
+.vscode/
+.vs/
