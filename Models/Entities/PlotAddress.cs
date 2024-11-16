@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
-namespace AGROCHEM.Models;
+namespace AGROCHEM.Models.Entities;
 
 public partial class PlotAddress
 {
@@ -13,5 +14,6 @@ public partial class PlotAddress
 
     public string? Voivodeship { get; set; }
 
+    [JsonIgnore]
     public virtual ICollection<Plot> Plots { get; set; } = new List<Plot>();
 }

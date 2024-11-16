@@ -1,6 +1,10 @@
-﻿using AGROCHEM.Models;
+﻿using AGROCHEM.Models.Entities;
+using AGROCHEM.Models.EntitiesDto;
 using AGROCHEM.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using Newtonsoft.Json.Linq;
 
 namespace AGROCHEM.Controllers
 {
@@ -14,11 +18,11 @@ namespace AGROCHEM.Controllers
         }
         [Route("register")]
         [HttpPost]
-        public async Task<IActionResult> RegisterAsync([FromForm] User user)
+        public async Task<IActionResult> RegisterAsync([FromForm] UserDto userdto)
         {
             if (ModelState.IsValid)
             {
-                string result = await _userService.RegisterUser(user);
+                string result = await _userService.RegisterUser(userdto);
                 if (result == "Użytkownik został dodany.")
                 {
                     return Ok(new {message = result});
@@ -31,6 +35,31 @@ namespace AGROCHEM.Controllers
             return BadRequest(new { message = "Wystąpił błąd w rejestracji." });
         }
 
+        [Route("login")]
+        [HttpPost]
+        public async Task<IActionResult> Login([FromForm] UserDto userdto)
+        {
+            if (ModelState.IsValid)
+            {
+                string result = await _userService.Login(userdto);
+                if (result == "Niepoprawny email lub hasło")
+                {
+                    return BadRequest(new { message = result });
+                }
+                else
+                {
+                    
+                    return Ok(new { token = result, user = userdto.Email });
+                }
+            }
+            return BadRequest(new { message = "Wystąpił błąd w rejestracji." });
+        }
+
+      
+
+       
+
+        
     }
 
 }

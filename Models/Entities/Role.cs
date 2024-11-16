@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace AGROCHEM.Models;
+namespace AGROCHEM.Models.Entities;
 
 public partial class Role
 {

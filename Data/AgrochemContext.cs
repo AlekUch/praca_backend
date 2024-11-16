@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using AGROCHEM.Models;
+
+using AGROCHEM.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace AGROCHEM.Data;
