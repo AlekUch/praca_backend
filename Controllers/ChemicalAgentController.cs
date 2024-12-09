@@ -1,27 +1,28 @@
-﻿using AGROCHEM.Models.Entities;
-using AGROCHEM.Models.EntitiesDto;
+﻿using AGROCHEM.Models.EntitiesDto;
 using AGROCHEM.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AGROCHEM.Controllers
 {
-    [Route("agrochem/plants")]
+
+    [Route("agrochem/chemicalagents")]
     [Authorize(Roles = "Admin")]
-    public class PlantController : ControllerBase
+    public class ChemicalAgentController : ControllerBase
     {
-        private readonly PlantService _plantService;
-        public PlantController(PlantService plantService)
+        private readonly ChemicalAgentService _chemicalAgentService;
+        public ChemicalAgentController(ChemicalAgentService chemicalAgentService)
         {
-            _plantService = plantService;
+            _chemicalAgentService = chemicalAgentService;
         }
 
+
         [HttpGet]
-        public async Task<IActionResult> GetPlants()
+        public async Task<IActionResult> GetChemicalAgents()
         {
             try
             {
-                var result = await _plantService.GetPlants();
+                var result = await _chemicalAgentService.GetChemicalAgents();
                 return Ok(result);
             }
             catch (ApplicationException ex)
@@ -30,18 +31,18 @@ namespace AGROCHEM.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Wystąpił błąd podczas pobierania działek." });
+                return StatusCode(500, new { message = "Wystąpił błąd podczas pobierania środków chemicznych." });
             }
 
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddPlant([FromBody] PlantDTO plantDTO)
+        public async Task<IActionResult> AddChemicalAgent([FromBody] ChemicalAgentDTO chemicalAgentDTO)
         {
             try
             {
-                string result = await _plantService.AddPlant(plantDTO);
-                if (result == "Utworzono roślinę.")
+                string result = await _chemicalAgentService.AddChemicalAgent(chemicalAgentDTO);
+                if (result == "Utworzono środek chemiczny.")
                 {
                     return Ok(new { message = result });
                 }
@@ -56,24 +57,24 @@ namespace AGROCHEM.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Wystąpił błąd podczas pobierania działek." });
+                return StatusCode(500, new { message = "Wystąpił błąd podczas tworzenia środka." });
             }
 
         }
 
         [HttpPut]
         [Route("archive/{id}")]
-        public async Task<IActionResult> ArchivePlant(int id, [FromQuery] bool archive)
+        public async Task<IActionResult> ArchiveChemicalAgent(int id, [FromQuery] bool archive)
         {
             try
             {
 
-                bool isUpdated = await _plantService.UpdateArchivePlant(id, archive);
+                bool isUpdated = await _chemicalAgentService.UpdateArchiveChemAgent(id, archive);
                 if (archive == true)
                 {
                     if (!isUpdated)
                     {
-                        return BadRequest(new { message = "Nie można zarchiwizować tej rośliny." });
+                        return BadRequest(new { message = "Nie można zarchiwizować tego środka." });
                     }
 
                     return Ok(new { message = "Zarchiwizowano pomyślnie" });
@@ -82,7 +83,7 @@ namespace AGROCHEM.Controllers
                 {
                     if (!isUpdated)
                     {
-                        return BadRequest(new { message = "Nie można cofnąć archiwizacji tej rośliny." });
+                        return BadRequest(new { message = "Nie można cofnąć archiwizacji tego środka." });
                     }
 
                     return Ok(new { message = "Cofnięto archiwizację pomyślnie" });
@@ -97,16 +98,16 @@ namespace AGROCHEM.Controllers
 
         [HttpPut]
         [Route("{id}")]
-        public async Task<IActionResult> UpdatePlant(int id, [FromBody] PlantDTO PlantDTO)
+        public async Task<IActionResult> UpdateChemAgent(int id, [FromBody] ChemicalAgentDTO chemicalAgentDTO)
         {
             try
             {
 
-                bool isUpdated = await _plantService.UpdatePlant(id, PlantDTO);
+                bool isUpdated = await _chemicalAgentService.UpdateChemicalAgent(id, chemicalAgentDTO);
 
                 if (!isUpdated)
                 {
-                    return BadRequest(new { message = "Nie można edytować tej rośliny." });
+                    return BadRequest(new { message = "Nie można edytować tego środka." });
                 }
 
                 return Ok(new { message = "Edytowano pomyślnie" });

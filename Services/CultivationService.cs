@@ -52,6 +52,7 @@ namespace AGROCHEM.Services
             try
             {
                 var plants = await _context.Plants
+                    .Where(p=>p.Archival==false)
                     .ToListAsync();
 
 

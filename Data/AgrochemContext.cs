@@ -53,6 +53,8 @@ public partial class AgrochemContext : DbContext
             entity.ToTable("ChemicalAgent", "agro_chem");
 
             entity.Property(e => e.Name).HasMaxLength(256);
+            entity.Property(e => e.Type).HasMaxLength(20);
+            entity.Property(e => e.Description).HasMaxLength(2000);
         });
 
         modelBuilder.Entity<ChemicalTreatment>(entity =>

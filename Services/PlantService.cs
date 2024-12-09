@@ -28,8 +28,10 @@ namespace AGROCHEM.Services
                      {
                          PlantId = p.PlantId,
                          Name = p.Name,
-                         RotationPeriod = p.RotationPeriod,                        
+                         RotationPeriod = p.RotationPeriod, 
+                         Archival = p.Archival 
                      })
+                     
                     .ToListAsync();
                 return plants;
             }
@@ -55,7 +57,8 @@ namespace AGROCHEM.Services
                 var newPlant = new Plant
                 {
                     Name = plantDto.Name,
-                    RotationPeriod = plantDto.RotationPeriod
+                    RotationPeriod = plantDto.RotationPeriod,
+                    Archival = false
                    // Archival = false
                 };
 
@@ -69,6 +72,46 @@ namespace AGROCHEM.Services
                 Console.WriteLine(ex.Message);
                 return ex.Message;
             }
+        }
+        public async Task<bool> UpdateArchivePlant(int id, bool archive)
+        {
+            try
+            {
+                var plant = await _context.Plants.FindAsync(id);
+                if (plant == null)
+                {
+                    return false;
+                }
+
+                plant.Archival = archive;
+
+                _context.Plants.Update(plant);
+                await _context.SaveChangesAsync();
+
+                return true; // Operacja zakończona sukcesem
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Wystąpił błąd: {ex.Message}");
+                throw new ApplicationException("Błąd podczas archiwizacj działek", ex);
+            }
+        }
+
+        public async Task<bool> UpdatePlant(int id, PlantDTO plantDTO)
+        {
+            var plant = await _context.Plants.FindAsync(id);
+            if (plant == null)
+            {
+                return false; 
+            }
+
+            plant.Name = plantDTO.Name;
+            plant.RotationPeriod = plantDTO.RotationPeriod;
+            
+            _context.Plants.Update(plant);
+            await _context.SaveChangesAsync();
+
+            return true; // Operacja zakończona sukcesem
         }
     }
 }

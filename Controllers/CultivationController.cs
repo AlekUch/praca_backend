@@ -10,10 +10,10 @@ namespace AGROCHEM.Controllers
     [Route("agrochem/cultivations")]
     public class CultivationController : ControllerBase
     {
-        private readonly CultivationService _userService;
-        public CultivationController(CultivationService userService)
+        private readonly CultivationService _cultivationService;
+        public CultivationController(CultivationService cultivationService)
         {
-            _userService = userService;
+            _cultivationService = cultivationService;
         }
 
         [Authorize]
@@ -30,8 +30,8 @@ namespace AGROCHEM.Controllers
             {
                 try
                 {
-                    var cultivations = await _userService.GetCultivations(userId);
-                    var plants = await _userService.GetPlants();
+                    var cultivations = await _cultivationService.GetCultivations(userId);
+                    var plants = await _cultivationService.GetPlants();
                     var response = new
                     {
                         cultivations = cultivations,
@@ -64,7 +64,7 @@ namespace AGROCHEM.Controllers
             {
                 try
                 {
-                    string result = await _userService.AddCultivation(cultivation);
+                    string result = await _cultivationService.AddCultivation(cultivation);
                     if (result == "Utworzono uprawę.")
                     {
                         return Ok(new { message = result });
@@ -94,7 +94,7 @@ namespace AGROCHEM.Controllers
             try
             {
 
-                bool isUpdated = await _userService.UpdateCultivation(id, cultivationDTO);
+                bool isUpdated = await _cultivationService.UpdateCultivation(id, cultivationDTO);
 
                 if (!isUpdated)
                 {
@@ -120,7 +120,7 @@ namespace AGROCHEM.Controllers
             try
             {
 
-                bool isUpdated = await _userService.UpdateArchiveCultivation(id, archive);
+                bool isUpdated = await _cultivationService.UpdateArchiveCultivation(id, archive);
                 if (archive == true)
                 {
                     if (!isUpdated)
@@ -154,7 +154,7 @@ namespace AGROCHEM.Controllers
         {
             try
             {
-                bool isDeleted = await _userService.DeleteCultivation(id);
+                bool isDeleted = await _cultivationService.DeleteCultivation(id);
 
                 if (!isDeleted)
                 {

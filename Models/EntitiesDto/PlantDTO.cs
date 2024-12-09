@@ -7,5 +7,6 @@
         public string? Name { get; set; }
 
         public int? RotationPeriod { get; set; }
+        public bool? Archival { get; set; }
     }
 }
