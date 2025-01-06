@@ -22,6 +22,7 @@ public partial class ChemicalUse
     public int? MinDays { get; set; }
 
     public int? MaxDays { get; set; }
+    public bool? Archival { get; set; }
 
     public virtual ChemicalAgent? ChemAgent { get; set; }
 

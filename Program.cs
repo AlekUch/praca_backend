@@ -67,6 +67,7 @@ builder.Services.AddScoped<CultivationService, CultivationService>();
 builder.Services.AddScoped<PlantService, PlantService>();
 builder.Services.AddScoped<ChemicalAgentService, ChemicalAgentService>();
 builder.Services.AddScoped<ChemicalUseService, ChemicalUseService>();
+builder.Services.AddScoped<DiseaseService, DiseaseService>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddHttpContextAccessor();
 var app = builder.Build();

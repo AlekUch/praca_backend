@@ -31,13 +31,8 @@ namespace AGROCHEM.Controllers
                 try
                 {
                     var cultivations = await _cultivationService.GetCultivations(userId);
-                    var plants = await _cultivationService.GetPlants();
-                    var response = new
-                    {
-                        cultivations = cultivations,
-                        plants = plants
-                    };
-                    return Ok(response);
+                    
+                    return Ok(cultivations);
                 }
                 catch (ApplicationException ex)
                 {

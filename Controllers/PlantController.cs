@@ -16,6 +16,7 @@ namespace AGROCHEM.Controllers
             _plantService = plantService;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetPlants()
         {

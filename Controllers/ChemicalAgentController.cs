@@ -36,6 +36,26 @@ namespace AGROCHEM.Controllers
 
         }
 
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<IActionResult> GetChemicalAgentById(int id)
+        {
+            try
+            {
+                var result = await _chemicalAgentService.GetChemicalAgentById(id);
+                return Ok(result);
+            }
+            catch (ApplicationException ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Wystąpił błąd podczas pobierania środków chemicznych." });
+            }
+
+        }
+
         [HttpPost]
         public async Task<IActionResult> AddChemicalAgent([FromBody] ChemicalAgentDTO chemicalAgentDTO)
         {
