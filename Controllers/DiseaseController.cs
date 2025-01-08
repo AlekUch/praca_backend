@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AGROCHEM.Controllers
 {
     [Route("agrochem/disease")]
-    [Authorize(Roles = "Admin")]
+    [Authorize/*(Roles = "Admin")*/]
     public class DiseaseController : ControllerBase
     {
         private readonly DiseaseService _diseaseService;

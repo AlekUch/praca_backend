@@ -7,7 +7,8 @@ namespace AGROCHEM.Controllers
 {
 
     [Route("agrochem/chemicalagents")]
-    [Authorize(Roles = "Admin")]
+    [Authorize]
+   // [Authorize(Roles = "Admin")]
     public class ChemicalAgentController : ControllerBase
     {
         private readonly ChemicalAgentService _chemicalAgentService;
@@ -36,6 +37,7 @@ namespace AGROCHEM.Controllers
 
         }
 
+        
         [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> GetChemicalAgentById(int id)

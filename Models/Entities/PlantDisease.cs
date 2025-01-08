@@ -5,7 +5,6 @@ namespace AGROCHEM.Models.Entities;
 
 public partial class PlantDisease
 {
-    public int PlDiseId { get; set; }
 
     public int? DiseaseId { get; set; }
 

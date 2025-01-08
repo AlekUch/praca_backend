@@ -50,6 +50,41 @@ namespace AGROCHEM.Services
             }
         }
 
+        public async Task<List<ChemicalUseDTO>> GetChemAgentUsePlant(int id)
+        {
+            try
+            {
+
+                var chemAgentUse = await _context.ChemicalUses
+                    .Where(p => p.PlantId == id)
+                    .Include(p => p.Plant)
+                    .Include(p=>p.ChemAgent)
+                     .Select(p => new ChemicalUseDTO
+                     {
+                         ChemUseId = p.ChemUseId,
+                         ChemAgentId = p.ChemAgentId,
+                         ChemAgentName = p.ChemAgent.Name,
+                         PlantId = p.PlantId,
+                         MinDose = p.MinDose,
+                         MaxDose = p.MaxDose,
+                         MinWater = p.MinWater,
+                         MaxWater = p.MaxWater,
+                         MinDays = p.MinDays,
+                         MaxDays = p.MaxDays,
+                         PlantName = p.Plant.Name,
+                         Archival = p.Archival
+                     })
+
+                    .ToListAsync();
+                return chemAgentUse;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Wystąpił błąd: {ex.Message}");
+                throw new ApplicationException("Błąd podczas pobierania szczegółowych informacji", ex);
+            }
+        }
+
         public async Task<string> AddChemicalUse(ChemicalUseDTO chemicalUseDTO)
         {
             try

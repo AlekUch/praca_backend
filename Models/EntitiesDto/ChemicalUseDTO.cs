@@ -5,6 +5,7 @@
         public int ChemUseId { get; set; }
 
         public int? ChemAgentId { get; set; }
+        public string? ChemAgentName { get; set; }
 
         public int? PlantId { get; set; }
 

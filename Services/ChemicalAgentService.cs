@@ -41,6 +41,30 @@ namespace AGROCHEM.Services
             }
         }
 
+        public async Task<List<ChemicalAgentDTO>> GetChemicalAgentsForUser()
+        {
+            try
+            {
+                var chemicalAgents = await _context.ChemicalAgents
+                     .Where(c=>c.Archival==false)
+                     .Select(c => new ChemicalAgentDTO
+                     {
+                         ChemAgentId = c.ChemAgentId,
+                         Name = c.Name,
+                         Type = c.Type,
+                         Description = c.Description,
+                         Archival = c.Archival
+                     })
+                    .ToListAsync();
+                return chemicalAgents;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Wystąpił błąd: {ex.Message}");
+                throw new ApplicationException("Błąd podczas pobierania działek", ex);
+            }
+        }
+
         public async Task<ChemicalAgentDTO> GetChemicalAgentById(int id)
         {
             try

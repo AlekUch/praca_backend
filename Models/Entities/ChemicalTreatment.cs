@@ -7,9 +7,7 @@ public partial class ChemicalTreatment
 {
     public int ChemTreatId { get; set; }
 
-    public int? PlotId { get; set; }
-
-    public int? PlantId { get; set; }
+    public int? CultivationId { get; set; }
 
     public DateTime? Date { get; set; }
 
@@ -23,7 +21,6 @@ public partial class ChemicalTreatment
 
     public virtual ChemicalAgent? ChemAgent { get; set; }
 
-    public virtual Plant? Plant { get; set; }
+    public virtual Cultivation? Cultivation { get; set; }
 
-    public virtual Plot? Plot { get; set; }
 }

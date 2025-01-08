@@ -72,13 +72,9 @@ public partial class AgrochemContext : DbContext
                 .HasForeignKey(d => d.ChemAgentId)
                 .HasConstraintName("FK__ChemicalT__ChemA__3C34F16F");
 
-            entity.HasOne(d => d.Plant).WithMany(p => p.ChemicalTreatments)
-                .HasForeignKey(d => d.PlantId)
-                .HasConstraintName("FK__ChemicalT__Plant__3B40CD36");
-
-            entity.HasOne(d => d.Plot).WithMany(p => p.ChemicalTreatments)
-                .HasForeignKey(d => d.PlotId)
-                .HasConstraintName("FK__ChemicalT__PlotI__3A4CA8FD");
+            entity.HasOne(d => d.Cultivation).WithMany(p => p.ChemicalTreatments)
+                .HasForeignKey(d => d.CultivationId)
+                .HasConstraintName("FK_Cultivation");
         });
 
         modelBuilder.Entity<ChemicalUse>(entity =>
@@ -151,7 +147,8 @@ public partial class AgrochemContext : DbContext
 
         modelBuilder.Entity<PlantDisease>(entity =>
         {
-            entity.HasKey(e => e.PlDiseId).HasName("PK__PlantDis__80ADE8145F484A49");
+            entity.HasKey(e => new { e.DiseaseId, e.PlantId })
+                .HasName("PK_PlantDise_Plant_Dise");
 
             entity.ToTable("PlantDisease", "agro_chem");
 

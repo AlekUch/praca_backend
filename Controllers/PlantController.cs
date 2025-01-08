@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AGROCHEM.Controllers
 {
     [Route("agrochem/plants")]
-    [Authorize(Roles = "Admin")]
+    [Authorize/*(Roles = "Admin")*/]
     public class PlantController : ControllerBase
     {
         private readonly PlantService _plantService;

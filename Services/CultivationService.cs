@@ -24,7 +24,37 @@ namespace AGROCHEM.Services
                 var cultivations = await _context.Cultivations
                     .Include(c => c.Plot) // Zależność od Plot
                     .Include(c => c.Plant) // Zależność od Plant
-                    .Where(c => c.Plot.OwnerId == userId && c.HarvestDate == null)
+                    .Where(c => c.Plot.OwnerId == userId && c.Archival == false)
+                    .Select(p => new CultivationDTO
+                    {
+                        CultivationId = p.CultivationId,
+                        PlantName = p.Plant.Name,
+                        PlotNumber = p.Plot.PlotNumber,
+                        SowingDate = p.SowingDate,
+                        HarvestDate = p.HarvestDate,
+                        Area = p.Area,
+                        Archival = p.Archival,
+                        PlantId = p.PlantId,
+                        PlotId = p.PlotId
+                    })
+                    .ToListAsync();
+                return cultivations;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Wystąpił błąd: {ex.Message}");
+                throw new ApplicationException("Błąd podczas pobierania działek", ex);
+            }
+        }
+
+        public async Task<List<CultivationDTO>> GetAllCultivations(int userId)
+        {
+            try
+            {
+                var cultivations = await _context.Cultivations
+                    .Include(c => c.Plot) // Zależność od Plot
+                    .Include(c => c.Plant) // Zależność od Plant
+                    .Where(c => c.Plot.OwnerId == userId )
                     .Select(p => new CultivationDTO
                     {
                         CultivationId = p.CultivationId,
@@ -74,7 +104,8 @@ namespace AGROCHEM.Services
                     PlotId = cultivation.PlotId,
                     PlantId = cultivation.PlantId,
                     SowingDate = cultivation.SowingDate,
-                    Area = cultivation.Area
+                    Area = cultivation.Area,
+                    Archival = false
                 };
 
                 _context.Cultivations.Add(newCultivation);
