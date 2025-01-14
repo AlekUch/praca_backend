@@ -12,7 +12,6 @@ public partial class Plant
     public int? RotationPeriod { get; set; }
     public bool? Archival { get; set; }
 
-    public virtual ICollection<ChemicalTreatment> ChemicalTreatments { get; set; } = new List<ChemicalTreatment>();
 
     public virtual ICollection<ChemicalUse> ChemicalUses { get; set; } = new List<ChemicalUse>();
 

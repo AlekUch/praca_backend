@@ -19,7 +19,7 @@ public partial class Plot
 
     public virtual PlotAddress? Address { get; set; }
 
-    public virtual ICollection<ChemicalTreatment> ChemicalTreatments { get; set; } = new List<ChemicalTreatment>();
+   
 
     public virtual ICollection<Cultivation> Cultivations { get; set; } = new List<Cultivation>();
 
