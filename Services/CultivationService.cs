@@ -17,14 +17,14 @@ namespace AGROCHEM.Services
 
         }
 
-        public async Task<List<CultivationDTO>> GetCultivations(int userId)
+        public async Task<List<CultivationDTO>> GetCultivations(int userId, bool isArchival)
         {
             try
             {
                 var cultivations = await _context.Cultivations
                     .Include(c => c.Plot) // Zależność od Plot
                     .Include(c => c.Plant) // Zależność od Plant
-                    .Where(c => c.Plot.OwnerId == userId && c.Archival == false)
+                    .Where(c => c.Plot.OwnerId == userId && c.Archival == isArchival)
                     .Select(p => new CultivationDTO
                     {
                         CultivationId = p.CultivationId,
@@ -37,6 +37,7 @@ namespace AGROCHEM.Services
                         PlantId = p.PlantId,
                         PlotId = p.PlotId
                     })
+                    .OrderByDescending(c=>c.SowingDate)
                     .ToListAsync();
                 return cultivations;
             }

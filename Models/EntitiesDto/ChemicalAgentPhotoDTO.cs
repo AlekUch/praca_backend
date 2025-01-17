@@ -1,15 +1,12 @@
 ﻿namespace AGROCHEM.Models.EntitiesDto
 {
-    public class ChemicalAgentDTO
+    public class ChemicalAgentPhotoDTO
     {
         public int ChemAgentId { get; set; }
 
         public string? Name { get; set; }
         public string? Type { get; set; }
         public string? Description { get; set; }
-       
-        public bool? Archival { get; set; }
-        public string? Photo { get; set; }
-        public string? PhotoName { get; set; }
+        public IFormFile? File { get; set; }
     }
 }

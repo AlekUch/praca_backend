@@ -16,4 +16,5 @@ public partial class Photo
     public byte[]? BinaryData { get; set; }
 
     public virtual ICollection<Disease> Diseases { get; set; } = new List<Disease>();
+    public virtual ICollection<ChemicalAgent> ChemicalAgents { get; set; } = new List<ChemicalAgent>();
 }

@@ -74,16 +74,28 @@ namespace AGROCHEM.Services
             }
         }
 
-        public async Task<List<Plot>> GetUserPlots(int userId)
+        public async Task<List<Plot>> GetUserPlots(int userId, bool isArchive)
         {
             try
             {
-                var plots = await _context.Plots
-                    .Where(p => p.OwnerId == userId)
-                    .Include(p => p.Address)
-                    .OrderBy(p => p.Archival)
-                    .ToListAsync();
-                return plots;
+                if (isArchive == false)
+                {
+                    var plots = await _context.Plots
+                   .Where(p => p.OwnerId == userId && p.Archival==isArchive )
+                   .Include(p => p.Address)
+                   .OrderBy(p => p.Archival)
+                   .ToListAsync();
+                    return plots;
+                }
+                else
+                {
+                    var plots = await _context.Plots
+                  .Where(p => p.OwnerId == userId )
+                  .Include(p => p.Address)
+                  .OrderBy(p => p.Archival)
+                  .ToListAsync();
+                    return plots;
+                }                              
             }
             catch (Exception ex)
             {
@@ -149,7 +161,7 @@ namespace AGROCHEM.Services
             try
             {
                 var plotsArea = await _context.Plots
-                 .FromSqlRaw("SELECT PlotId,PlotNumber,   p.Area -  (SELECT COALESCE(SUM(c.Area), 0) FROM [agro_chem].Cultivation c WHERE c.PlotId=p.PlotId AND c.HarvestDate IS NULL) AS Area " +
+                 .FromSqlRaw("SELECT PlotId,PlotNumber,   p.Area -  (SELECT COALESCE(SUM(c.Area), 0) FROM [agro_chem].Cultivation c WHERE c.PlotId=p.PlotId AND (c.Archival IS NULL OR c.Archival=0)) AS Area " +
                     "FROM [agro_chem].Plot p WHERE p.OwnerId = @userId",
                  new SqlParameter("@userId", userId))
                  .Select(p => new PlotsAreaDto

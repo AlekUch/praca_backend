@@ -55,6 +55,10 @@ public partial class AgrochemContext : DbContext
             entity.Property(e => e.Name).HasMaxLength(256);
             entity.Property(e => e.Type).HasMaxLength(20);
             entity.Property(e => e.Description).HasMaxLength(2000);
+
+            entity.HasOne(e => e.Photo).WithMany(p => p.ChemicalAgents)
+                .HasForeignKey(e => e.PhotoId)
+                .HasConstraintName("FK_ChemAgent_Photo");
         });
 
         modelBuilder.Entity<ChemicalTreatment>(entity =>
@@ -209,6 +213,7 @@ public partial class AgrochemContext : DbContext
             entity.Property(e => e.FirstName).HasMaxLength(100);
             entity.Property(e => e.LastName).HasMaxLength(100);
             entity.Property(e => e.Password).HasMaxLength(256);
+            entity.Property(e=> e.EmailConfirmationToken).HasMaxLength(36);
 
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
                 .HasForeignKey(d => d.RoleId)

@@ -16,7 +16,7 @@ namespace AGROCHEM.Models.EntitiesDto
         public string? ChemAgentName { get; set; }
 
         public decimal? Dose { get; set; }
-
+        public decimal? MaxArea { get; set; }
         public string? Reason { get; set; }
         public int PlantId { get; set; }
       public decimal? MinDose { get; set; }

@@ -50,9 +50,9 @@ namespace AGROCHEM.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetUserPlots()
+        public async Task<IActionResult> GetUserPlots([FromQuery] bool isArchive)
         {
-            var userId = Convert.ToInt32(HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var userId = HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (userId == null)
             {
@@ -62,7 +62,7 @@ namespace AGROCHEM.Controllers
             {
                 try
                 {
-                    var plots = await _plotService.GetUserPlots(userId);
+                    var plots = await _plotService.GetUserPlots(Convert.ToInt32(userId), isArchive);
                     Console.WriteLine(plots);
                     return Ok(plots);
                 }
@@ -140,7 +140,7 @@ namespace AGROCHEM.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPlotsArea()
         {
-            var userId = Convert.ToInt32(HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var userId = HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (userId == null)
             {
@@ -150,7 +150,7 @@ namespace AGROCHEM.Controllers
             {
                 try
                 {
-                    var plotsArea = await _plotService.GetPlotsArea(userId);
+                    var plotsArea = await _plotService.GetPlotsArea(Convert.ToInt32(userId));
                     Console.WriteLine(plotsArea);
                     return Ok(plotsArea);
                 }

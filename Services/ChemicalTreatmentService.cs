@@ -39,6 +39,7 @@ namespace AGROCHEM.Services
                         Area = p.a.Area,
                         Dose = p.a.Dose,
                         Reason = p.a.Reason,
+                        MaxArea = p.a.Cultivation.Area,
                         ChemAgentName=p.a.ChemAgent.Name,
                         ChemAgentId = p.a.ChemAgent.ChemAgentId,
                         ChemUseId = _context.ChemicalUses.Where(c => c.ChemAgentId == p.a.ChemAgentId && c.PlantId == p.a.Cultivation.Plant.PlantId).Select(c => c.ChemUseId).FirstOrDefault(),
@@ -110,6 +111,35 @@ namespace AGROCHEM.Services
             await _context.SaveChangesAsync();
 
             return true; // Operacja zakończona sukcesem
+        }
+
+        public async Task<bool> DeleteChemTreat(int id)
+        {
+            try
+            {
+                var chemTreat = await _context.ChemicalTreatments.FindAsync(id);
+                if (chemTreat == null)
+                {
+                    return false;
+                }
+               
+                try
+                {                    
+                    _context.ChemicalTreatments.Remove(chemTreat);
+                    await _context.SaveChangesAsync();                  
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);                 
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Wystąpił błąd: {ex.Message}");
+                throw new ApplicationException("Błąd podczas archiwizacj działek", ex);
+            }
         }
 
     }

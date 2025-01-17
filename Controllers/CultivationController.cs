@@ -18,7 +18,7 @@ namespace AGROCHEM.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetCultivationsPlants()
+        public async Task<IActionResult> GetCultivationsPlants([FromQuery] bool isArchive)
         {
             var userId = Convert.ToInt32(HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
@@ -30,7 +30,7 @@ namespace AGROCHEM.Controllers
             {
                 try
                 {
-                    var cultivations = await _cultivationService.GetCultivations(userId);
+                    var cultivations = await _cultivationService.GetCultivations(userId, isArchive);
                     
                     return Ok(cultivations);
                 }
@@ -44,6 +44,8 @@ namespace AGROCHEM.Controllers
                 }
             }
         }
+
+       
 
         [Authorize]
         [HttpPost]

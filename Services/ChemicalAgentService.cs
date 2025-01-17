@@ -18,21 +18,50 @@ namespace AGROCHEM.Services
 
         }
 
-        public async Task<List<ChemicalAgentDTO>> GetChemicalAgents()
+        public async Task<List<ChemicalAgentDTO>> GetChemicalAgents(bool isArchive)
         {
             try
             {
-                var chemicalAgents = await _context.ChemicalAgents
-                     .Select(c => new ChemicalAgentDTO
-                     {
-                         ChemAgentId=c.ChemAgentId,
-                         Name=c.Name,
-                         Type=c.Type,
-                         Description=c.Description,
-                         Archival=c.Archival                      
-                     })
-                    .ToListAsync();
-                return chemicalAgents;
+                if (isArchive == false)
+                {
+                    var chemicalAgents = await _context.ChemicalAgents
+                        .Where(c => c.Archival == isArchive)
+                        .Include(p => p.Photo)
+                         .Select(c => new ChemicalAgentDTO
+                         {
+                             ChemAgentId = c.ChemAgentId,
+                             Name = c.Name,
+                             Type = c.Type,
+                             Description = c.Description,
+                             Archival = c.Archival,
+                             PhotoName = c.Photo.Name,
+                             Photo = c.Photo != null
+                               ? $"data:{c.Photo.Type};base64,{Convert.ToBase64String(c.Photo.BinaryData)}"
+                               : null,
+                         })
+                        .ToListAsync();
+                    return chemicalAgents;
+                }
+                else
+                {
+                    var chemicalAgents = await _context.ChemicalAgents
+                        .Include(p => p.Photo)
+                         .Select(c => new ChemicalAgentDTO
+                         {
+                             ChemAgentId = c.ChemAgentId,
+                             Name = c.Name,
+                             Type = c.Type,
+                             Description = c.Description,
+                             Archival = c.Archival,
+                             PhotoName = c.Photo.Name,
+                             Photo = c.Photo != null
+                               ? $"data:{c.Photo.Type};base64,{Convert.ToBase64String(c.Photo.BinaryData)}"
+                               : null,
+                         })
+                        .ToListAsync();
+                    return chemicalAgents;
+                }
+
             }
             catch (Exception ex)
             {
@@ -70,6 +99,7 @@ namespace AGROCHEM.Services
             try
             {
                 var chemicalAgents = await _context.ChemicalAgents
+                    .Include(p => p.Photo)
                     .Where(p=>p.ChemAgentId==id)
                      .Select(c => new ChemicalAgentDTO
                      {
@@ -77,7 +107,11 @@ namespace AGROCHEM.Services
                          Name = c.Name,
                          Type = c.Type,
                          Description = c.Description,
-                         Archival = c.Archival
+                         Archival = c.Archival,
+                         PhotoName = c.Photo.Name,
+                         Photo = c.Photo != null
+                           ? $"data:{c.Photo.Type};base64,{Convert.ToBase64String(c.Photo.BinaryData)}"
+                           : null,
                      })
                     .FirstOrDefaultAsync();
                 return chemicalAgents;
@@ -89,33 +123,51 @@ namespace AGROCHEM.Services
             }
         }
 
-        public async Task<string> AddChemicalAgent(ChemicalAgentDTO chemicalAgentDTO)
+        public async Task<string> AddChemicalAgent(ChemicalAgentPhotoDTO chemicalAgentPhotoDTO)
         {
-            try
-            {
+            
                 var chemAgent = _context.ChemicalAgents
-                .FirstOrDefault(p => p.Name == chemicalAgentDTO.Name);
+                .FirstOrDefault(p => p.Name == chemicalAgentPhotoDTO.Name);
                 if (chemAgent != null)
                 {
                     return "Środek chemiczny o tej nazwie juz istnieje.";
                 }
 
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {                
+                using var memoryStream = new MemoryStream();
+                await chemicalAgentPhotoDTO.File.CopyToAsync(memoryStream);
+                var fileBytes = memoryStream.ToArray();
+
+                var photo = new Photo
+                {
+                    BinaryData = fileBytes,
+                    Name = chemicalAgentPhotoDTO.File.FileName,
+                    Extension = Path.GetExtension(chemicalAgentPhotoDTO.File.FileName),
+                    Type = chemicalAgentPhotoDTO.File.ContentType
+                };
+
+                _context.Photos.Add(photo);
+                await _context.SaveChangesAsync();
 
                 var newChemAgent = new ChemicalAgent
                 {
-                    Name = chemicalAgentDTO.Name,
-                    Type = chemicalAgentDTO.Type,
-                    Description = chemicalAgentDTO.Description,
-                    Archival=false
+                    Name = chemicalAgentPhotoDTO.Name,
+                    Type = chemicalAgentPhotoDTO.Type,
+                    Description = chemicalAgentPhotoDTO.Description,
+                    Archival=false,
+                    PhotoId = photo.PhotoId,
                 };
 
                 _context.ChemicalAgents.Add(newChemAgent);
                 await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
                 return "Utworzono środek chemiczny.";
             }
             catch (Exception ex)
             {
-                // Logowanie błędu
+                await transaction.RollbackAsync();
                 Console.WriteLine(ex.Message);
                 return ex.Message;
             }
@@ -145,22 +197,59 @@ namespace AGROCHEM.Services
             }
         }
 
-        public async Task<bool> UpdateChemicalAgent(int id, ChemicalAgentDTO chemicalAgentDTO)
+        public async Task<bool> UpdateChemicalAgent(int id, ChemicalAgentPhotoDTO chemicalAgentPhotoDTO)
         {
+
             var chemAgent = await _context.ChemicalAgents.FindAsync(id);
             if (chemAgent == null)
             {
                 return false;
             }
 
-            chemAgent.Name = chemicalAgentDTO.Name;
-            chemAgent.Type = chemicalAgentDTO.Type;
-            chemAgent.Description = chemicalAgentDTO.Description;
-            
-            _context.ChemicalAgents.Update(chemAgent);
-            await _context.SaveChangesAsync();
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try {
+                chemAgent.Name = chemicalAgentPhotoDTO.Name;
+                chemAgent.Type = chemicalAgentPhotoDTO.Type;
+                chemAgent.Description = chemicalAgentPhotoDTO.Description;
 
-            return true; // Operacja zakończona sukcesem
+                if (chemicalAgentPhotoDTO.File != null)
+                {
+                    var photoId = chemAgent.PhotoId;
+                    var photoToDelete = await _context.Photos.FindAsync(photoId);
+                    if (photoToDelete != null) // Sprawdź, czy znaleziono obiekt
+                    {
+                        _context.Photos.Remove(photoToDelete);
+                    }
+
+                    using var memoryStream = new MemoryStream();
+                    await chemicalAgentPhotoDTO.File.CopyToAsync(memoryStream);
+                    var fileBytes = memoryStream.ToArray();
+
+                    var photo = new Photo
+                    {
+                        BinaryData = fileBytes,
+                        Name = chemicalAgentPhotoDTO.File.FileName,
+                        Extension = Path.GetExtension(chemicalAgentPhotoDTO.File.FileName),
+                        Type = chemicalAgentPhotoDTO.File.ContentType
+                    };
+
+                    _context.Photos.Add(photo);
+                    await _context.SaveChangesAsync();
+                    chemAgent.PhotoId = photo.PhotoId;
+                }
+                _context.ChemicalAgents.Update(chemAgent);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+                return true; // Operacja zakończona sukcesem
+            
+            }
+            catch (Exception ex)
+            {
+                // Logowanie błędu
+                Console.WriteLine(ex.Message);
+                await transaction.RollbackAsync();
+                return false;
+            }
         }
 
     }

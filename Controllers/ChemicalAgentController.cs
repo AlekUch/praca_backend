@@ -19,11 +19,11 @@ namespace AGROCHEM.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GetChemicalAgents()
+        public async Task<IActionResult> GetChemicalAgents([FromQuery] bool isArchive)
         {
             try
             {
-                var result = await _chemicalAgentService.GetChemicalAgents();
+                var result = await _chemicalAgentService.GetChemicalAgents(isArchive);
                 return Ok(result);
             }
             catch (ApplicationException ex)
@@ -59,7 +59,7 @@ namespace AGROCHEM.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddChemicalAgent([FromBody] ChemicalAgentDTO chemicalAgentDTO)
+        public async Task<IActionResult> AddChemicalAgent([FromForm] ChemicalAgentPhotoDTO chemicalAgentDTO)
         {
             try
             {
@@ -120,7 +120,7 @@ namespace AGROCHEM.Controllers
 
         [HttpPut]
         [Route("{id}")]
-        public async Task<IActionResult> UpdateChemAgent(int id, [FromBody] ChemicalAgentDTO chemicalAgentDTO)
+        public async Task<IActionResult> UpdateChemAgent(int id, [FromForm] ChemicalAgentPhotoDTO chemicalAgentDTO)
         {
             try
             {

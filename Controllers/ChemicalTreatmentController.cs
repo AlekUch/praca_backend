@@ -90,5 +90,28 @@ namespace AGROCHEM.Controllers
                 return StatusCode(500, new { message = ex.Message });
             }
         }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<IActionResult> DeleteChemTreat(int id)
+        {
+            try
+            {
+                bool isDeleted = await _chemicalTreatmentService.DeleteChemTreat(id);
+
+                if (!isDeleted)
+                {
+                    return BadRequest(new { message = "Nie można usunąć zabiegu." });
+                }
+
+                return Ok(new { message = "Usunięto pomyślnie" });
+
+            }
+            catch (ApplicationException ex)
+            {
+                // Złap ApplicationException wyrzucony z serwisu
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
     }
 }
