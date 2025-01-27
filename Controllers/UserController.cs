@@ -9,12 +9,15 @@ using Newtonsoft.Json.Linq;
 namespace AGROCHEM.Controllers
 {
     [Route("agrochem")]
+    [ApiController]
     public class UserController : ControllerBase
     {
         private readonly UserService _userService;
-        public UserController(UserService userService)
+        private readonly IEmailService _emailService;
+        public UserController(UserService userService, IEmailService emailService)
         {
             _userService = userService;
+            _emailService = emailService;
         }
         [Route("register")]
         [HttpPost]
@@ -22,9 +25,14 @@ namespace AGROCHEM.Controllers
         {
             if (ModelState.IsValid)
             {
-                string result = await _userService.RegisterUser(userdto);
+                var confirmationToken = Guid.NewGuid().ToString();
+
+                string result = await _userService.RegisterUser(userdto, confirmationToken);
+
                 if (result == "Użytkownik został dodany.")
                 {
+                    var confirmationLink = $"https://agrochem/confirm-email?token={confirmationToken}";
+                    await _emailService.SendEmailAsync(userdto.Email, "Potwierdź swój e-mail", $"Kliknij w link, aby potwierdzić: {confirmationLink}");
                     return Ok(new {message = result});
                 }
                 else
@@ -48,7 +56,7 @@ namespace AGROCHEM.Controllers
                 }
                 else
                 {
-                    
+                   
                     return Ok(new { token = result, user = userdto.Email });
                 }
             }
@@ -56,8 +64,6 @@ namespace AGROCHEM.Controllers
         }
 
       
-
-       
 
         
     }

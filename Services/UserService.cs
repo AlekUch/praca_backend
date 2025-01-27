@@ -30,7 +30,7 @@ namespace AGROCHEM.Services
 
         }
 
-        public async Task<string> RegisterUser(UserDto userDto)
+        public async Task<string> RegisterUser(UserDto userDto, string confirmationToken)
         {
             try
             {
@@ -43,13 +43,16 @@ namespace AGROCHEM.Services
                     {
                         return "Użytkownik o podanym adresie email posiada już  konto.";
                     }
+                   
 
                     var user = new User
                     {
                         FirstName = userDto.FirstName,
                         LastName = userDto.LastName,
                         Email = userDto.Email,
-                        RoleId = 1
+                        RoleId = 1,
+                        EmailConfirmed = false,
+                        EmailConfirmationToken = confirmationToken
                     };
 
                     user.Password = _passwordHasher.HashPassword(user, userDto.Password);
