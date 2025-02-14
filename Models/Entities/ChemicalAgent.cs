@@ -14,6 +14,7 @@ public partial class ChemicalAgent
     public int? PhotoId { get; set; }
     public virtual Photo? Photo { get; set; }
 
+    public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
     public virtual ICollection<ChemicalTreatment> ChemicalTreatments { get; set; } = new List<ChemicalTreatment>();
 
     public virtual ICollection<ChemicalUse> ChemicalUses { get; set; } = new List<ChemicalUse>();

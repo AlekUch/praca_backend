@@ -22,8 +22,7 @@ namespace AGROCHEM.Services
             try
             {
                 var cultivations = await _context.Cultivations
-                    .Include(c => c.Plot) // Zależność od Plot
-                    .Include(c => c.Plant) // Zależność od Plant
+                    .Include(c => c.Plot) 
                     .Where(c => c.Plot.OwnerId == userId && c.Archival == isArchival)
                     .Select(p => new CultivationDTO
                     {
@@ -53,8 +52,8 @@ namespace AGROCHEM.Services
             try
             {
                 var cultivations = await _context.Cultivations
-                    .Include(c => c.Plot) // Zależność od Plot
-                    .Include(c => c.Plant) // Zależność od Plant
+                    .Include(c => c.Plot) 
+                    .Include(c => c.Plant) 
                     .Where(c => c.Plot.OwnerId == userId )
                     .Select(p => new CultivationDTO
                     {

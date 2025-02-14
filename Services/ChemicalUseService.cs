@@ -37,6 +37,7 @@ namespace AGROCHEM.Services
                          MinDays = p.MinDays,
                          MaxDays = p.MaxDays,
                          PlantName = p.Plant.Name,
+                         NumberOfTreatments = p.NumberOfTreatments,
                          Archival =p.Archival
                      })
 
@@ -72,6 +73,7 @@ namespace AGROCHEM.Services
                          MinDays = p.MinDays,
                          MaxDays = p.MaxDays,
                          PlantName = p.Plant.Name,
+                         NumberOfTreatments = p.NumberOfTreatments,
                          Archival = p.Archival
                      })
 

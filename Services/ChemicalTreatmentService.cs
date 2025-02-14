@@ -22,29 +22,36 @@ namespace AGROCHEM.Services
             try
             {
                 var chemTreat = await _context.ChemicalTreatments
-                    .Include(p => p.Cultivation)
-                    .Join(_context.Plots,
-                         a => a.CultivationId,
-                        b => b.PlotId,
-                        (a, b) => new { a, b })
-                    .Where(x => x.b.OwnerId == userId)
-                    .Select(p => new ChemicalTreatmentGetDTO
+                    .Where(c => c.Cultivation.Plot.OwnerId == 1)
+                    .Select(c => new ChemicalTreatmentGetDTO
                     {
-                        ChemTreatId = p.a.ChemTreatId,
-                        PlotNumber = p.a.Cultivation.Plot.PlotNumber,
-                        PlantName = p.a.Cultivation.Plant.Name,
-                        PlantId = p.a.Cultivation.Plant.PlantId,
-                        CultivationId = p.a.CultivationId,
-                        Date = p.a.Date,
-                        Area = p.a.Area,
-                        Dose = p.a.Dose,
-                        Reason = p.a.Reason,
-                        MaxArea = p.a.Cultivation.Area,
-                        ChemAgentName=p.a.ChemAgent.Name,
-                        ChemAgentId = p.a.ChemAgent.ChemAgentId,
-                        ChemUseId = _context.ChemicalUses.Where(c => c.ChemAgentId == p.a.ChemAgentId && c.PlantId == p.a.Cultivation.Plant.PlantId).Select(c => c.ChemUseId).FirstOrDefault(),
-                        MinDose = _context.ChemicalUses.Where(c => c.ChemAgentId == p.a.ChemAgentId && c.PlantId == p.a.Cultivation.Plant.PlantId).Select(c => c.MinDose).FirstOrDefault(),
-                        MaxDose = _context.ChemicalUses.Where(c => c.ChemAgentId == p.a.ChemAgentId && c.PlantId == p.a.Cultivation.Plant.PlantId).Select(c => c.MaxDose).FirstOrDefault()
+                        ChemTreatId = c.ChemTreatId,
+                        PlotNumber = c.Cultivation.Plot.PlotNumber,
+                        PlantName = c.Cultivation.Plant.Name,
+                        PlantId = c.Cultivation.Plant.PlantId,
+                        CultivationId = c.CultivationId,
+                        Date = c.Date,
+                        Area = c.Area,
+                        Dose = c.Dose,
+                        Reason = c.Reason,
+                        MaxArea = c.Cultivation.Area,
+                        ChemAgentName = c.ChemAgent != null ? c.ChemAgent.Name : null,
+                        ChemAgentId = c.ChemAgentId,
+                        ChemUseId = _context.ChemicalUses
+                        .Where(cu => (cu.ChemAgentId == c.ChemAgentId )
+                            && (cu.PlantId == c.Cultivation.Plant.PlantId ))
+                        .Select(cu => cu.ChemUseId)
+                        .FirstOrDefault(),
+                        MinDose = _context.ChemicalUses
+                        .Where(cu => (cu.ChemAgentId == c.ChemAgentId )
+                            && (cu.PlantId == c.Cultivation.Plant.PlantId ))
+                        .Select(cu => cu.MinDose)
+                        .FirstOrDefault(),
+                        MaxDose = _context.ChemicalUses
+                        .Where(cu => (cu.ChemAgentId == c.ChemAgentId )
+                            && (cu.PlantId == c.Cultivation.Plant.PlantId ))
+                        .Select(cu => cu.MaxDose)
+                        .FirstOrDefault()
                     })
                     .OrderBy(p => p.Date)
                     .ToListAsync();
@@ -57,8 +64,9 @@ namespace AGROCHEM.Services
             }
         }
 
-        public async Task<string> AddChemicalTreatment(ChemicalTreatmentDTO chemicalTreatmentDTO)
+        public async Task<string> AddChemicalTreatment(ChemicalTreatmentDTO chemicalTreatmentDTO, int userId)
         {
+            using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
                 var chemTreat = _context.ChemicalTreatments
@@ -68,29 +76,63 @@ namespace AGROCHEM.Services
                     return "Taki zabieg już istnieje.";
                 }
 
+                    var newChemTreat = new ChemicalTreatment
+                    {
+                        ChemAgentId = chemicalTreatmentDTO.ChemAgentId,
+                        CultivationId = chemicalTreatmentDTO.CultivationId,
+                        Date = chemicalTreatmentDTO.Date,
+                        Dose = chemicalTreatmentDTO.Dose,
+                        Reason = chemicalTreatmentDTO.Reason,
+                        Area = chemicalTreatmentDTO.Area
 
-                var newChemTreat = new ChemicalTreatment
-                {
-                    ChemAgentId = chemicalTreatmentDTO.ChemAgentId,
-                    CultivationId = chemicalTreatmentDTO.CultivationId,
-                    Date = chemicalTreatmentDTO.Date,
-                    Dose = chemicalTreatmentDTO.Dose,
-                    Reason = chemicalTreatmentDTO.Reason,
-                    Area = chemicalTreatmentDTO.Area
-                   
-                };
+                    };
 
-                _context.ChemicalTreatments.Add(newChemTreat);
-                await _context.SaveChangesAsync();
+                    _context.ChemicalTreatments.Add(newChemTreat);
+                    await _context.SaveChangesAsync();
+
+                    int count = _context.ChemicalTreatments
+                    .Where(p => p.ChemAgentId == chemicalTreatmentDTO.ChemAgentId && p.CultivationId == chemicalTreatmentDTO.CultivationId && p.Date.Value.Year == DateTime.Now.Year)
+                    .Count();
+
+                    int plantId = _context.Cultivations
+                    .Where(p => p.CultivationId == chemicalTreatmentDTO.CultivationId)
+                    .Select(p => (int)p.PlantId)
+                    .FirstOrDefault();
+
+                    var chemUse = _context.ChemicalUses
+                        .Where(c => c.PlantId == plantId && c.ChemAgentId == chemicalTreatmentDTO.ChemAgentId)
+                        .FirstOrDefault();
+
+                    if (chemUse != null && count < chemUse.NumberOfTreatments)
+                    {
+                        DateTime? endDateToAdd = chemUse.MaxDays == null ?
+                            null :
+                            newChemTreat.Date.Value.AddDays((double)chemUse.MaxDays);
+                        var notification = new Notification
+                        {
+                            UserId = userId,
+                            ChemAgentId = chemicalTreatmentDTO.ChemAgentId,
+                            CultivationId = chemicalTreatmentDTO.CultivationId,
+                            StartDate = newChemTreat.Date.Value.AddDays((chemUse.MinDays ?? 0)),
+                            EndDate = endDateToAdd
+                        };
+                        _context.Notifications.Add(notification);
+                        await _context.SaveChangesAsync();
+                    }
+                await transaction.CommitAsync();
                 return "Utworzono nowy zabieg chemiczny.";
+                
             }
-            catch (Exception ex)
-            {
-                // Logowanie błędu
-                Console.WriteLine(ex.Message);
-                return ex.Message;
-            }
-        }
+            
+                catch (Exception ex)
+                {
+                    // Logowanie błędu
+                    Console.WriteLine(ex.Message);
+                    await transaction.RollbackAsync();
+                    return ex.Message;
+                }
+
+}
 
         public async Task<bool> UpdateChemTreat(int id, ChemicalTreatmentDTO chemTreatDTO)
         {
@@ -138,7 +180,7 @@ namespace AGROCHEM.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"Wystąpił błąd: {ex.Message}");
-                throw new ApplicationException("Błąd podczas archiwizacj działek", ex);
+                throw new ApplicationException("Błąd usuwania zabiegu", ex);
             }
         }
 

@@ -131,7 +131,7 @@ namespace AGROCHEM.Services
             _context.Plots.Update(plot);
             await _context.SaveChangesAsync();
 
-            return true; // Operacja zakończona sukcesem
+            return true; 
         }
         public async Task<bool> UpdateArchivePlot(int id, bool archive)
         {

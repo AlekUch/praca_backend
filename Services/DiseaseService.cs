@@ -254,7 +254,7 @@ namespace AGROCHEM.Services
 
                     var photoId = disease.PhotoId;
                     var photo = await _context.Photos.FindAsync(photoId);
-                    if (photo != null) // Sprawdź, czy znaleziono obiekt
+                    if (photo != null) 
                     {
                         _context.Photos.Remove(photo);
                     }
@@ -265,7 +265,7 @@ namespace AGROCHEM.Services
                 }
                 catch (Exception ex)
                 {
-                    // Logowanie błędu
+                
                     Console.WriteLine(ex.Message);
                     await transaction.RollbackAsync();
                     return false;

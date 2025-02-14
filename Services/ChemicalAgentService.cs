@@ -216,7 +216,7 @@ namespace AGROCHEM.Services
                 {
                     var photoId = chemAgent.PhotoId;
                     var photoToDelete = await _context.Photos.FindAsync(photoId);
-                    if (photoToDelete != null) // Sprawdź, czy znaleziono obiekt
+                    if (photoToDelete != null) 
                     {
                         _context.Photos.Remove(photoToDelete);
                     }
@@ -240,12 +240,11 @@ namespace AGROCHEM.Services
                 _context.ChemicalAgents.Update(chemAgent);
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
-                return true; // Operacja zakończona sukcesem
+                return true; 
             
             }
             catch (Exception ex)
             {
-                // Logowanie błędu
                 Console.WriteLine(ex.Message);
                 await transaction.RollbackAsync();
                 return false;

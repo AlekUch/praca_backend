@@ -22,5 +22,6 @@ public partial class Cultivation
     public virtual Plant? Plant { get; set; }
 
     public virtual Plot? Plot { get; set; }
+    public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
     public virtual ICollection<ChemicalTreatment> ChemicalTreatments { get; set; } = new List<ChemicalTreatment>();
 }

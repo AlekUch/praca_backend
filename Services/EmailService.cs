@@ -30,45 +30,44 @@ namespace AGROCHEM.Services
 
 
                 var message = new MimeMessage();
-                message.From.Add(new MailboxAddress("Your App Name", username)); // Nadawca
-                message.To.Add(new MailboxAddress(to, to)); // Odbiorca
-                message.Subject = "Rejestracja w serwisie"; // Temat wiadomości
+                message.From.Add(new MailboxAddress("AGROCHEM", username)); 
+                message.To.Add(new MailboxAddress(to, to)); 
+                message.Subject = subject; 
 
                 message.Body = new TextPart("html")
                 {
                     Text = body
                 };
 
-                // Wysyłanie wiadomości e-mail
-                using (var client = new SmtpClient())
+            using (var client = new SmtpClient())
+            {
+                try
                 {
-                    try
-                    {
-                   // client.ServerCertificateValidationCallback = (s, c, h, e) => true;
+                     client.ServerCertificateValidationCallback = (s, c, h, e) => true;
                     // Połączenie z serwerem SMTP
                     client.Connect("smtp.gmail.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
 
-                        // Uwierzytelnianie
-                         client.Authenticate(username, password);
+                    // Uwierzytelnianie
+                    client.Authenticate(username, password);
 
-                        // Wysłanie wiadomości
-                         client.Send(message);
-                        Console.WriteLine("E-mail został wysłany pomyślnie.");
+                    // Wysłanie wiadomości
+                    client.Send(message);
+                    Console.WriteLine("E-mail został wysłany pomyślnie.");
 
-                        // Rozłączenie z serwerem
-                         client.Disconnect(true);
-                    }
-                    catch (Exception ex)
+                    // Rozłączenie z serwerem
+                    client.Disconnect(true);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Błąd podczas połączenia: {ex.Message}");
+                    if (ex.InnerException != null)
                     {
-                            Console.WriteLine($"Błąd podczas połączenia: {ex.Message}");
-                            if (ex.InnerException != null)
-                            {
-                                Console.WriteLine($"Szczegóły wewnętrzne: {ex.InnerException.Message}");
-                            }
+                        Console.WriteLine($"Szczegóły wewnętrzne: {ex.InnerException.Message}");
+                    }
                 }
 
-
             }
+            
         }
     }
 

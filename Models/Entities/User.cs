@@ -18,8 +18,12 @@ public partial class User
     public string? EmailConfirmationToken { get; set; }
 
     public int? RoleId { get; set; }
+    public string? PasswordResetToken { get; set; }
 
-    public virtual ICollection<Plot> Plots { get; set; } = new List<Plot>();
+    public virtual ICollection<Plot> Plots { get; set; }
+        = new List<Plot>();
+    public virtual ICollection<Notification> Notifications { get; set; }
+        = new List<Notification>();
 
     public virtual Role? Role { get; set; }
 }

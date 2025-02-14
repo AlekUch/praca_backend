@@ -46,7 +46,8 @@ namespace AGROCHEM.Controllers
         {
             try
             {
-                string result = await _chemicalTreatmentService.AddChemicalTreatment(chemicalTreatmentDTO);
+                var userId = HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                string result = await _chemicalTreatmentService.AddChemicalTreatment(chemicalTreatmentDTO, Convert.ToInt32(userId));
                 if (result == "Utworzono nowy zabieg chemiczny.")
                 {
                     return Ok(new { message = result });

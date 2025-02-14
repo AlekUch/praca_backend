@@ -69,6 +69,7 @@ builder.Services.AddScoped<ChemicalAgentService, ChemicalAgentService>();
 builder.Services.AddScoped<ChemicalUseService, ChemicalUseService>();
 builder.Services.AddScoped<DiseaseService, DiseaseService>();
 builder.Services.AddScoped<ChemicalTreatmentService, ChemicalTreatmentService>();
+builder.Services.AddScoped<NotificationService, NotificationService>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddHttpContextAccessor();

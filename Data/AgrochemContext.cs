@@ -26,6 +26,7 @@ public partial class AgrochemContext : DbContext
     public virtual DbSet<Cultivation> Cultivations { get; set; }
 
     public virtual DbSet<Disease> Diseases { get; set; }
+    public DbSet<Notification> Notifications { get; set; }
 
     public virtual DbSet<Photo> Photos { get; set; }
 
@@ -129,6 +130,29 @@ public partial class AgrochemContext : DbContext
                 .HasConstraintName("FK__Disease__PhotoId__282DF8C2");
         });
 
+        modelBuilder.Entity<Notification>(entity =>
+        {
+            entity.HasKey(e => e.NotificationId).HasName("PK__Notifica__20CF2E12D8F4F8D0");
+
+            entity.ToTable("Notifications", "agro_chem");
+
+            entity.Property(e => e.EndDate).HasColumnType("datetime");
+            entity.Property(e => e.IsRead).HasDefaultValue(false);
+            entity.Property(e => e.StartDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.ChemAgent).WithMany(p => p.Notifications)
+                .HasForeignKey(d => d.ChemAgentId)
+                .HasConstraintName("FK__Notificat__ChemA__1D7B6025");
+
+            entity.HasOne(d => d.Cultivation).WithMany(p => p.Notifications)
+                .HasForeignKey(d => d.CultivationId)
+                .HasConstraintName("FK__Notificat__Culti__1E6F845E");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Notifications)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK__Notificat__UserI__1C873BEC");
+        });
+
         modelBuilder.Entity<Photo>(entity =>
         {
             entity.HasKey(e => e.PhotoId).HasName("PK__Photo__21B7B5E28BA83CA6");
@@ -214,6 +238,7 @@ public partial class AgrochemContext : DbContext
             entity.Property(e => e.LastName).HasMaxLength(100);
             entity.Property(e => e.Password).HasMaxLength(256);
             entity.Property(e=> e.EmailConfirmationToken).HasMaxLength(36);
+            entity.Property(e => e.PasswordResetToken).HasMaxLength(36);
 
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
                 .HasForeignKey(d => d.RoleId)

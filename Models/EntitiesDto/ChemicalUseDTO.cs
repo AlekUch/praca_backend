@@ -22,5 +22,6 @@
         public int? MaxDays { get; set; }
         public bool? Archival { get; set; }
         public string? PlantName { get; set; }
+        public int? NumberOfTreatments { get; set; }
     }
 }

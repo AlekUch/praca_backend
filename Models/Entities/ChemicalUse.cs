@@ -23,6 +23,7 @@ public partial class ChemicalUse
 
     public int? MaxDays { get; set; }
     public bool? Archival { get; set; }
+    public int? NumberOfTreatments { get; set; }
 
     public virtual ChemicalAgent? ChemAgent { get; set; }
 
