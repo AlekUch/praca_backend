@@ -61,11 +61,9 @@ namespace AGROCHEM.Services
                         .ToListAsync();
                     return chemicalAgents;
                 }
-
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Wystąpił błąd: {ex.Message}");
                 throw new ApplicationException("Błąd podczas pobierania działek", ex);
             }
         }
@@ -124,22 +122,19 @@ namespace AGROCHEM.Services
         }
 
         public async Task<string> AddChemicalAgent(ChemicalAgentPhotoDTO chemicalAgentPhotoDTO)
-        {
-            
+        {           
                 var chemAgent = _context.ChemicalAgents
                 .FirstOrDefault(p => p.Name == chemicalAgentPhotoDTO.Name);
                 if (chemAgent != null)
                 {
                     return "Środek chemiczny o tej nazwie juz istnieje.";
                 }
-
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {                
                 using var memoryStream = new MemoryStream();
                 await chemicalAgentPhotoDTO.File.CopyToAsync(memoryStream);
                 var fileBytes = memoryStream.ToArray();
-
                 var photo = new Photo
                 {
                     BinaryData = fileBytes,
@@ -147,10 +142,8 @@ namespace AGROCHEM.Services
                     Extension = Path.GetExtension(chemicalAgentPhotoDTO.File.FileName),
                     Type = chemicalAgentPhotoDTO.File.ContentType
                 };
-
                 _context.Photos.Add(photo);
                 await _context.SaveChangesAsync();
-
                 var newChemAgent = new ChemicalAgent
                 {
                     Name = chemicalAgentPhotoDTO.Name,
@@ -159,7 +152,6 @@ namespace AGROCHEM.Services
                     Archival=false,
                     PhotoId = photo.PhotoId,
                 };
-
                 _context.ChemicalAgents.Add(newChemAgent);
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
@@ -199,19 +191,16 @@ namespace AGROCHEM.Services
 
         public async Task<bool> UpdateChemicalAgent(int id, ChemicalAgentPhotoDTO chemicalAgentPhotoDTO)
         {
-
             var chemAgent = await _context.ChemicalAgents.FindAsync(id);
             if (chemAgent == null)
             {
                 return false;
             }
-
             using var transaction = await _context.Database.BeginTransactionAsync();
             try {
                 chemAgent.Name = chemicalAgentPhotoDTO.Name;
                 chemAgent.Type = chemicalAgentPhotoDTO.Type;
                 chemAgent.Description = chemicalAgentPhotoDTO.Description;
-
                 if (chemicalAgentPhotoDTO.File != null)
                 {
                     var photoId = chemAgent.PhotoId;
@@ -220,7 +209,6 @@ namespace AGROCHEM.Services
                     {
                         _context.Photos.Remove(photoToDelete);
                     }
-
                     using var memoryStream = new MemoryStream();
                     await chemicalAgentPhotoDTO.File.CopyToAsync(memoryStream);
                     var fileBytes = memoryStream.ToArray();
@@ -232,7 +220,6 @@ namespace AGROCHEM.Services
                         Extension = Path.GetExtension(chemicalAgentPhotoDTO.File.FileName),
                         Type = chemicalAgentPhotoDTO.File.ContentType
                     };
-
                     _context.Photos.Add(photo);
                     await _context.SaveChangesAsync();
                     chemAgent.PhotoId = photo.PhotoId;
@@ -240,8 +227,7 @@ namespace AGROCHEM.Services
                 _context.ChemicalAgents.Update(chemAgent);
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
-                return true; 
-            
+                return true;             
             }
             catch (Exception ex)
             {

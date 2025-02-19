@@ -8,7 +8,7 @@ namespace AGROCHEM.Controllers
 
     [Route("agrochem/chemicalagents")]
     [Authorize]
-   // [Authorize(Roles = "Admin")]
+    
     public class ChemicalAgentController : ControllerBase
     {
         private readonly ChemicalAgentService _chemicalAgentService;
@@ -58,6 +58,7 @@ namespace AGROCHEM.Controllers
 
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> AddChemicalAgent([FromForm] ChemicalAgentPhotoDTO chemicalAgentDTO)
         {
@@ -84,6 +85,7 @@ namespace AGROCHEM.Controllers
 
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         [Route("archive/{id}")]
         public async Task<IActionResult> ArchiveChemicalAgent(int id, [FromQuery] bool archive)
@@ -118,6 +120,7 @@ namespace AGROCHEM.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         [Route("{id}")]
         public async Task<IActionResult> UpdateChemAgent(int id, [FromForm] ChemicalAgentPhotoDTO chemicalAgentDTO)

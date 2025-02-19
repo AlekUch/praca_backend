@@ -19,21 +19,39 @@ namespace AGROCHEM.Services
 
         }
 
-        public async Task<List<PlantDTO>> GetPlants()
+        public async Task<List<PlantDTO>> GetPlants(bool isArchive)
         {
             try
             {
-                var plants = await _context.Plants
-                     .Select(p => new PlantDTO
-                     {
-                         PlantId = p.PlantId,
-                         Name = p.Name,
-                         RotationPeriod = p.RotationPeriod, 
-                         Archival = p.Archival 
-                     })
-                     
-                    .ToListAsync();
-                return plants;
+                if (isArchive == false)
+                {
+                    var plants = await _context.Plants
+                        .Where(p => p.Archival == isArchive)
+                         .Select(p => new PlantDTO
+                         {
+                             PlantId = p.PlantId,
+                             Name = p.Name,
+                             RotationPeriod = p.RotationPeriod,
+                             Archival = p.Archival
+                         })
+
+                        .ToListAsync();
+                    return plants;
+                }
+                else
+                {
+                    var plants = await _context.Plants
+                        .Select(p => new PlantDTO
+                        {
+                            PlantId = p.PlantId,
+                            Name = p.Name,
+                            RotationPeriod = p.RotationPeriod,
+                            Archival = p.Archival
+                        })
+
+                       .ToListAsync();
+                    return plants;
+                }
             }
             catch (Exception ex)
             {

@@ -64,8 +64,8 @@ namespace AGROCHEM.Services
 
                         _context.Users.Add(user);
                         await _context.SaveChangesAsync();
-
-                        var confirmationLink = $"http://localhost:3000/activate/{confirmationToken}";
+                        var myVariable = Environment.GetEnvironmentVariable("FRONTEND_URL");
+                        var confirmationLink = $"{myVariable}/activate/{confirmationToken}";
                         await _emailService.SendEmailAsync(user.Email, "Potwierdź swój e-mail", $"Kliknij w link, aby aktywować utworzone konto: {confirmationLink}");
                         await transaction.CommitAsync();
                         return "Utworzono konto. Wysłano link aktywacyjny na podany email.";
@@ -194,7 +194,8 @@ namespace AGROCHEM.Services
                     _context.Users.Update(user);
                     await _context.SaveChangesAsync();
 
-                    var resetLink = $"http://localhost:3000/reset-password/{restetToken}";
+                    var myVariable = Environment.GetEnvironmentVariable("FRONTEND_URL");
+                    var resetLink = $"{myVariable}/ reset-password/{restetToken}";
                     await _emailService.SendEmailAsync(user.Email, "Zresetuj swoje hasło", $"Kliknij w link, aby utworzyć nowe hasło: {resetLink}");
                     await transaction.CommitAsync();
                     return "Wysłano e-mail z linkiem do zmiany hasła";

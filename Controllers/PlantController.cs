@@ -18,11 +18,11 @@ namespace AGROCHEM.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> GetPlants()
+        public async Task<IActionResult> GetPlants([FromQuery] bool isArchive)
         {
             try
             {
-                var result = await _plantService.GetPlants();
+                var result = await _plantService.GetPlants(isArchive);
                 return Ok(result);
             }
             catch (ApplicationException ex)

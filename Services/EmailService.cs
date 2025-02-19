@@ -27,34 +27,25 @@ namespace AGROCHEM.Services
             bool enableSsl = bool.Parse(smtpSettings["EnableSsl"]);
             string username = smtpSettings["Username"];
             string password = smtpSettings["Password"];
+            
 
 
-                var message = new MimeMessage();
+            var message = new MimeMessage();
                 message.From.Add(new MailboxAddress("AGROCHEM", username)); 
                 message.To.Add(new MailboxAddress(to, to)); 
                 message.Subject = subject; 
-
                 message.Body = new TextPart("html")
                 {
                     Text = body
                 };
-
             using (var client = new SmtpClient())
             {
                 try
                 {
-                     client.ServerCertificateValidationCallback = (s, c, h, e) => true;
-                    // Połączenie z serwerem SMTP
-                    client.Connect("smtp.gmail.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
-
-                    // Uwierzytelnianie
+                    client.Connect(host, port, MailKit.Security.SecureSocketOptions.StartTls);
                     client.Authenticate(username, password);
-
-                    // Wysłanie wiadomości
                     client.Send(message);
                     Console.WriteLine("E-mail został wysłany pomyślnie.");
-
-                    // Rozłączenie z serwerem
                     client.Disconnect(true);
                 }
                 catch (Exception ex)
@@ -62,12 +53,10 @@ namespace AGROCHEM.Services
                     Console.WriteLine($"Błąd podczas połączenia: {ex.Message}");
                     if (ex.InnerException != null)
                     {
-                        Console.WriteLine($"Szczegóły wewnętrzne: {ex.InnerException.Message}");
+                        Console.WriteLine($"Szczegóły: {ex.InnerException.Message}");
                     }
                 }
-
-            }
-            
+            }            
         }
     }
 

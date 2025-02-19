@@ -5,15 +5,19 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
+using DotNetEnv;
 
+Env.Load();
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("AGROCHEMConn");
-System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
+//var connectionString = builder.Configuration.GetConnectionString("AGROCHEMConn");
+//System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
+var connectionString = Env.GetString("CONNECTION_STRING");
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+var frontendUrl = Env.GetString("FRONTEND_URL");
 
 var key = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]);
 builder.Services.AddAuthentication(options =>
@@ -43,11 +47,12 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddDbContext<AgrochemContext>(options =>
     options.UseSqlServer(connectionString));
 
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
         builder => builder
-            .WithOrigins("http://localhost:3000") // React frontend
+            .WithOrigins(frontendUrl) // React frontend
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());
@@ -73,6 +78,34 @@ builder.Services.AddScoped<NotificationService, NotificationService>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Wpisz token w formacie: Bearer {token}"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
