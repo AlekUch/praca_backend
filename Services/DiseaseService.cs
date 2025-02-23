@@ -83,7 +83,7 @@ namespace AGROCHEM.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"Wystąpił błąd: {ex.Message}");
-                throw new ApplicationException("Błąd podczas pobierania danych", ex);
+                throw new ApplicationException("Błąd podczas pobierania chorób", ex);
             }
         }
 
@@ -139,8 +139,7 @@ namespace AGROCHEM.Services
                         .ToListAsync();
 
                     foreach (var plant in plantDisease)
-                    {
-                        // Tworzenie powiązań
+                    {                        
                         var newPlantDisease = new PlantDisease
                         {
                             DiseaseId = newDisease.DiseaseId,
@@ -157,7 +156,6 @@ namespace AGROCHEM.Services
             }
             catch (Exception ex)
             {
-                // Logowanie błędu
                 Console.WriteLine(ex.Message);
                 await transaction.RollbackAsync();
                 return ex.Message;
@@ -225,11 +223,10 @@ namespace AGROCHEM.Services
             }
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
-            return true; // Operacja zakończona sukcesem
+            return true; 
             }
             catch (Exception ex)
             {
-                // Logowanie błędu
                 Console.WriteLine(ex.Message);
                 await transaction.RollbackAsync();
                 return false;
@@ -274,7 +271,7 @@ namespace AGROCHEM.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"Wystąpił błąd: {ex.Message}");
-                throw new ApplicationException("Błąd podczas archiwizacj działek", ex);
+                throw new ApplicationException("Błąd podczas usuwania choroby", ex);
             }
         }
     }

@@ -10,6 +10,7 @@ using Newtonsoft.Json.Linq;
 namespace AGROCHEM.Controllers
 {
     [Route("agrochem/plots")]
+    [Authorize]
     public class PlotController : ControllerBase
     {
         private readonly PlotService _plotService;
@@ -18,7 +19,7 @@ namespace AGROCHEM.Controllers
             _plotService = plotService;
         }
 
-        [Authorize]       
+            
         [HttpPost]
         public async Task<IActionResult> Plots([FromBody] PlotDto plotDto)
         {
@@ -48,7 +49,7 @@ namespace AGROCHEM.Controllers
             return BadRequest(new { message = "Wystąpił błąd w tworzeniu działki." });
         }
 
-        [Authorize]
+        
         [HttpGet]
         public async Task<IActionResult> GetUserPlots([FromQuery] bool isArchive)
         {
@@ -106,7 +107,6 @@ namespace AGROCHEM.Controllers
             }
             catch (ApplicationException ex)
             {
-                // Złap ApplicationException wyrzucony z serwisu
                 return StatusCode(500, new { message = ex.Message });
             }
         }
@@ -130,12 +130,11 @@ namespace AGROCHEM.Controllers
             }
             catch (ApplicationException ex)
             {
-                // Złap ApplicationException wyrzucony z serwisu
                 return StatusCode(500, new { message = ex.Message });
             }
         }
 
-        [Authorize]
+       
         [Route("plotsArea")]
         [HttpGet]
         public async Task<IActionResult> GetPlotsArea()

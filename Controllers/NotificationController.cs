@@ -8,6 +8,7 @@ namespace AGROCHEM.Controllers
 {
   
     [Route("agrochem/notifications")]
+    [Authorize]
     public class NotificationController : ControllerBase
     {
         private readonly NotificationService _notificationService;
@@ -36,7 +37,7 @@ namespace AGROCHEM.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Wystąpił błąd podczas pobierania zabiegów chemicznych." });
+                return StatusCode(500, new { message = "Wystąpił błąd podczas pobierania powiadomień." });
             }
 
         }
@@ -60,7 +61,7 @@ namespace AGROCHEM.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Wystąpił błąd podczas pobierania zabiegów chemicznych." });
+                return StatusCode(500, new { message = "Wystąpił błąd podczas pobierania powiadomień." });
             }
 
         }
@@ -83,7 +84,6 @@ namespace AGROCHEM.Controllers
             }
             catch (ApplicationException ex)
             {
-                // Złap ApplicationException wyrzucony z serwisu
                 return StatusCode(500, new { message = ex.Message });
             }
         }
@@ -109,7 +109,6 @@ namespace AGROCHEM.Controllers
             }
             catch (ApplicationException ex)
             {
-                // Złap ApplicationException wyrzucony z serwisu
                 return StatusCode(500, new { message = ex.Message });
             }
         }

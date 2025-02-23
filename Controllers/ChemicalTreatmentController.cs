@@ -7,6 +7,7 @@ using System.Security.Claims;
 namespace AGROCHEM.Controllers
 {
     [Route("agrochem/chemicaltreatment")]
+    [Authorize]
     public class ChemicalTreatmentController : ControllerBase
     {
         private readonly ChemicalTreatmentService _chemicalTreatmentService;

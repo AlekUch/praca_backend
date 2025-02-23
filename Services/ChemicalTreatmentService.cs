@@ -22,7 +22,7 @@ namespace AGROCHEM.Services
             try
             {
                 var chemTreat = await _context.ChemicalTreatments
-                    .Where(c => c.Cultivation.Plot.OwnerId == 1)
+                    .Where(c => c.Cultivation.Plot.OwnerId == userId)
                     .Select(c => new ChemicalTreatmentGetDTO
                     {
                         ChemTreatId = c.ChemTreatId,
@@ -60,7 +60,7 @@ namespace AGROCHEM.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"Wystąpił błąd: {ex.Message}");
-                throw new ApplicationException("Błąd podczas pobierania działek", ex);
+                throw new ApplicationException("Błąd podczas pobierania zabiegów chemicznych", ex);
             }
         }
 
@@ -126,7 +126,6 @@ namespace AGROCHEM.Services
             
                 catch (Exception ex)
                 {
-                    // Logowanie błędu
                     Console.WriteLine(ex.Message);
                     await transaction.RollbackAsync();
                     return ex.Message;
@@ -152,7 +151,7 @@ namespace AGROCHEM.Services
             _context.ChemicalTreatments.Update(chemTreat);
             await _context.SaveChangesAsync();
 
-            return true; // Operacja zakończona sukcesem
+            return true;
         }
 
         public async Task<bool> DeleteChemTreat(int id)

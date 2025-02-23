@@ -8,6 +8,7 @@ using System.Security.Claims;
 namespace AGROCHEM.Controllers
 {
     [Route("agrochem/chemicaluse")]
+    [Authorize]
     public class ChemicalUseController : ControllerBase
     {
         private readonly ChemicalUseService _chemAgentUseService;
@@ -16,7 +17,7 @@ namespace AGROCHEM.Controllers
             _chemAgentUseService = chemAgentUseService;
         }
 
-        [Authorize]
+        
         [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> GetChemAgentUse(int id)
@@ -55,6 +56,7 @@ namespace AGROCHEM.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> AddChemicalUse([FromBody] ChemicalUseDTO chemicalUseDTO)
         {
@@ -81,6 +83,7 @@ namespace AGROCHEM.Controllers
 
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         [Route("{id}")]
         public async Task<IActionResult> UpdateChemUse(int id, [FromBody] ChemicalUseDTO chemicalUseDTO)
@@ -100,11 +103,11 @@ namespace AGROCHEM.Controllers
             }
             catch (ApplicationException ex)
             {
-                // Złap ApplicationException wyrzucony z serwisu
                 return StatusCode(500, new { message = ex.Message });
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         [Route("archive/{id}")]
         public async Task<IActionResult> ArchiveChemicalUse(int id, [FromQuery] bool archive)
@@ -134,7 +137,6 @@ namespace AGROCHEM.Controllers
             }
             catch (ApplicationException ex)
             {
-                // Złap ApplicationException wyrzucony z serwisu
                 return StatusCode(500, new { message = ex.Message });
             }
         }

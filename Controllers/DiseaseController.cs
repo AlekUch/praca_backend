@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AGROCHEM.Controllers
 {
     [Route("agrochem/disease")]
-    [Authorize/*(Roles = "Admin")*/]
+    [Authorize]
     public class DiseaseController : ControllerBase
     {
         private readonly DiseaseService _diseaseService;
@@ -54,6 +54,7 @@ namespace AGROCHEM.Controllers
 
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> AddDisease([FromForm] DiseasePhotoDTO diseasePhotoDTO)
         {
@@ -80,6 +81,7 @@ namespace AGROCHEM.Controllers
 
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         [Route("{id}")]
         public async Task<IActionResult> UpdateDisease(int id, [FromForm] DiseasePhotoDTO diseasePhotoDTO)
@@ -99,12 +101,11 @@ namespace AGROCHEM.Controllers
             }
             catch (ApplicationException ex)
             {
-                // Złap ApplicationException wyrzucony z serwisu
                 return StatusCode(500, new { message = ex.Message });
             }
         }
 
-
+        [Authorize(Roles = "Admin")]
         [HttpDelete]
         [Route("delete/{id}")]
         public async Task<IActionResult> DeleteDisease(int id)
@@ -123,7 +124,6 @@ namespace AGROCHEM.Controllers
             }
             catch (ApplicationException ex)
             {
-                // Złap ApplicationException wyrzucony z serwisu
                 return StatusCode(500, new { message = ex.Message });
             }
         }

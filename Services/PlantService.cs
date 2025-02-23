@@ -56,7 +56,7 @@ namespace AGROCHEM.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"Wystąpił błąd: {ex.Message}");
-                throw new ApplicationException("Błąd podczas pobierania działek", ex);
+                throw new ApplicationException("Błąd podczas pobierania roślin", ex);
             }
         }
 
@@ -86,7 +86,6 @@ namespace AGROCHEM.Services
             }
             catch (Exception ex)
             {
-                // Logowanie błędu
                 Console.WriteLine(ex.Message);
                 return ex.Message;
             }
@@ -106,12 +105,12 @@ namespace AGROCHEM.Services
                 _context.Plants.Update(plant);
                 await _context.SaveChangesAsync();
 
-                return true; // Operacja zakończona sukcesem
+                return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Wystąpił błąd: {ex.Message}");
-                throw new ApplicationException("Błąd podczas archiwizacj działek", ex);
+                throw new ApplicationException("Błąd podczas archiwizacj rośliny", ex);
             }
         }
 
@@ -129,7 +128,7 @@ namespace AGROCHEM.Services
             _context.Plants.Update(plant);
             await _context.SaveChangesAsync();
 
-            return true; // Operacja zakończona sukcesem
+            return true; 
         }
     }
 }

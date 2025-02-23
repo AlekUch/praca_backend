@@ -109,10 +109,10 @@ namespace AGROCHEM.Services
             var plot = await _context.Plots.FindAsync(id);
             if (plot == null)
             {
-                return false; // Użytkownik nie istnieje
+                return false;
             }
 
-            // Aktualizowanie właściwości użytkownika
+
             plot.PlotNumber = plotDto.PlotNumber;
             plot.Area = plotDto.Area;
 
@@ -125,7 +125,7 @@ namespace AGROCHEM.Services
             address.Location = plotDto.Location;
             address.District = plotDto.District;
             address.Voivodeship = plotDto.Voivodeship;
-            // inne pola
+ 
 
             _context.PlotAddresses.Update(address);
             _context.Plots.Update(plot);
@@ -148,7 +148,7 @@ namespace AGROCHEM.Services
                 _context.Plots.Update(plot);
                 await _context.SaveChangesAsync();
 
-                return true; // Operacja zakończona sukcesem
+                return true; 
             }
             catch (Exception ex)
             {

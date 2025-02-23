@@ -63,7 +63,7 @@ namespace AGROCHEM.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"Wystąpił błąd: {ex.Message}");
-                throw new ApplicationException("Błąd podczas pobierania działek", ex);
+                throw new ApplicationException("Błąd podczas pobierania powiadomień", ex);
             }
         }
 
@@ -85,7 +85,7 @@ namespace AGROCHEM.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"Wystąpił błąd: {ex.Message}");
-                throw new ApplicationException("Błąd podczas archiwizacj działek", ex);
+                throw new ApplicationException("Błąd podczas usuwania powiadomień", ex);
             }
         }
 
@@ -109,7 +109,7 @@ namespace AGROCHEM.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"Wystąpił błąd: {ex.Message}");
-                throw new ApplicationException("Błąd podczas archiwizacj działek", ex);
+                throw new ApplicationException("Błąd podczas odczytywania powiadomienia", ex);
             }
         }
     }

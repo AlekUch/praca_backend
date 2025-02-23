@@ -10,6 +10,7 @@ namespace AGROCHEM.Controllers
 {
     [Route("agrochem")]
     [ApiController]
+
     public class UserController : ControllerBase
     {
         private readonly UserService _userService;
@@ -19,6 +20,7 @@ namespace AGROCHEM.Controllers
             _userService = userService;
             _emailService = emailService;
         }
+
         [Route("register")]
         [HttpPost]
         public async Task<IActionResult> RegisterAsync([FromForm] UserDto userdto)
@@ -111,6 +113,7 @@ namespace AGROCHEM.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [Route("users")]
         [HttpGet]
         public async Task<IActionResult> GetUsers()
@@ -132,6 +135,7 @@ namespace AGROCHEM.Controllers
             
         }
 
+        [Authorize(Roles = "Admin")]
         [Route("user/{id}")]
         [HttpPut]
         public async Task<IActionResult> UpdateUser(int id, [FromBody] UsersDTO usersDto)
@@ -150,7 +154,29 @@ namespace AGROCHEM.Controllers
             }
             catch (ApplicationException ex)
             {
-                // Złap ApplicationException wyrzucony z serwisu
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete]
+        [Route("user/delete/{id}")]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            try
+            {
+                bool isDeleted = await _userService.DeleteUser(id);
+
+                if (!isDeleted)
+                {
+                    return BadRequest(new { message = "Nie można usunąć użytkownika." });
+                }
+
+                return Ok(new { message = "Usunięto pomyślnie" });
+
+            }
+            catch (ApplicationException ex)
+            {
                 return StatusCode(500, new { message = ex.Message });
             }
         }

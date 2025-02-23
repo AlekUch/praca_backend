@@ -42,8 +42,7 @@ public partial class AgrochemContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Name=AGROCHEMConn");
+    
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -8,6 +8,7 @@ using System.Security.Claims;
 namespace AGROCHEM.Controllers
 {
     [Route("agrochem/cultivations")]
+    [Authorize]
     public class CultivationController : ControllerBase
     {
         private readonly CultivationService _cultivationService;
@@ -16,7 +17,7 @@ namespace AGROCHEM.Controllers
             _cultivationService = cultivationService;
         }
 
-        [Authorize]
+      
         [HttpGet]
         public async Task<IActionResult> GetCultivationsPlants([FromQuery] bool isArchive)
         {
@@ -78,7 +79,7 @@ namespace AGROCHEM.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return StatusCode(500, new { message = "Wystąpił błąd podczas pobierania działek." });
+                    return StatusCode(500, new { message = "Wystąpił błąd podczas pobierania upraw." });
                 }
 
             }
@@ -103,7 +104,6 @@ namespace AGROCHEM.Controllers
             }
             catch (ApplicationException ex)
             {
-                // Złap ApplicationException wyrzucony z serwisu
                 return StatusCode(500, new { message = ex.Message });
             }
         }
@@ -139,12 +139,11 @@ namespace AGROCHEM.Controllers
             }
             catch (ApplicationException ex)
             {
-                // Złap ApplicationException wyrzucony z serwisu
                 return StatusCode(500, new { message = ex.Message });
             }
         }
 
-        [Authorize]
+
         [HttpDelete]
         [Route("delete/{id}")]
         public async Task<IActionResult> DeleteCultivation(int id)
@@ -163,7 +162,6 @@ namespace AGROCHEM.Controllers
             }
             catch (ApplicationException ex)
             {
-                // Złap ApplicationException wyrzucony z serwisu
                 return StatusCode(500, new { message = ex.Message });
             }
         }

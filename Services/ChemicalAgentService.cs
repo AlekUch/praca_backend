@@ -180,7 +180,7 @@ namespace AGROCHEM.Services
                 _context.ChemicalAgents.Update(chemAgent);
                 await _context.SaveChangesAsync();
 
-                return true; // Operacja zakończona sukcesem
+                return true; 
             }
             catch (Exception ex)
             {

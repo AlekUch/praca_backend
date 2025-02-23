@@ -31,13 +31,13 @@ builder.Services.AddAuthentication(options =>
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(key), // U¿ycie klucza z appsettings.json
-        ValidateIssuer = true, // Walidacja Issuer
-        ValidateAudience = true, // Walidacja Audience
-        ValidIssuer = jwtSettings["Issuer"], // Issuer z konfiguracji
-        ValidAudience = jwtSettings["Issuer"], // Audience z konfiguracji
+        IssuerSigningKey = new SymmetricSecurityKey(key), 
+        ValidateIssuer = true, 
+        ValidateAudience = true, 
+        ValidIssuer = jwtSettings["Issuer"], 
+        ValidAudience = jwtSettings["Issuer"], 
         RequireExpirationTime = true,
-        ValidateLifetime = true // Walidacja, czy token nie wygas³
+        ValidateLifetime = true 
     };
 });
 
@@ -52,7 +52,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
         builder => builder
-            .WithOrigins(frontendUrl) // React frontend
+            .WithOrigins(frontendUrl) 
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());
@@ -108,12 +108,11 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+
+
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+
 
 app.UseHttpsRedirection();
 app.UseCors("AllowReactApp");

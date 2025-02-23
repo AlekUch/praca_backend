@@ -72,7 +72,6 @@ namespace AGROCHEM.Services
                     }
                     catch (Exception ex)
                     {
-                        // Logowanie błędu
                         Console.WriteLine(ex.Message);
                         await transaction.RollbackAsync();
                         return "Nie można utworzyć konta";
@@ -86,7 +85,6 @@ namespace AGROCHEM.Services
             }
             catch (Exception ex)
             {
-                // Logowanie błędu
                 Console.WriteLine(ex.Message);
                 return ex.Message;
             }
@@ -143,7 +141,6 @@ namespace AGROCHEM.Services
             }
             catch (Exception ex)
             {
-                // Logowanie błędu
                 Console.WriteLine(ex.Message);
                 return ex.Message;
             }
@@ -219,7 +216,6 @@ namespace AGROCHEM.Services
             try
             {
                 var user = _context.Users
-                               .Include(u => u.Role)
                                .FirstOrDefault(u => u.PasswordResetToken == model.Token);
                 if (user is null)
                 {
@@ -228,7 +224,6 @@ namespace AGROCHEM.Services
                 string password = _passwordHasher.HashPassword(user, model.NewPassword); ;
                 user.Password = password;
                 _context.Entry(user).Property(x => x.Password).IsModified = true;
-                //_context.Users.Update(user);
                 await _context.SaveChangesAsync();
                 return true;
             }
@@ -259,7 +254,7 @@ namespace AGROCHEM.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"Wystąpił błąd: {ex.Message}");
-                throw new ApplicationException("Błąd podczas pobierania działek", ex);
+                throw new ApplicationException("Błąd podczas pobierania użytkowników", ex);
             }
         }
 
@@ -268,7 +263,7 @@ namespace AGROCHEM.Services
             var user = await _context.Users.FindAsync(id);
             if (user == null)
             {
-                return false; // Użytkownik nie istnieje
+                return false; 
             }
 
             user.FirstName = usersDto.FirstName;
@@ -280,6 +275,44 @@ namespace AGROCHEM.Services
             await _context.SaveChangesAsync();
 
             return true;
+        }
+
+        public async Task<bool> DeleteUser(int id)
+        {
+            try
+            {
+                var user = await _context.Users.FindAsync(id);
+                if (user == null)
+                {
+                    return false;
+                }
+                using var transaction = await _context.Database.BeginTransactionAsync();
+                try
+                {
+                    var plotsToDelete = _context.Plots.Where(p => p.OwnerId == id).ToList();
+
+                    _context.Plots.RemoveRange(plotsToDelete);
+
+                    _context.SaveChanges();
+
+                    _context.Users.Remove(user);
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    await transaction.RollbackAsync();
+                    return false;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Wystąpił błąd: {ex.Message}");
+                throw new ApplicationException("Błąd podczas usuwania użytkownika", ex);
+            }
         }
 
     }

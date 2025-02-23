@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AGROCHEM.Controllers
 {
     [Route("agrochem/plants")]
-    [Authorize/*(Roles = "Admin")*/]
+    [Authorize]
     public class PlantController : ControllerBase
     {
         private readonly PlantService _plantService;
@@ -16,7 +16,7 @@ namespace AGROCHEM.Controllers
             _plantService = plantService;
         }
 
-        [AllowAnonymous]
+
         [HttpGet]
         public async Task<IActionResult> GetPlants([FromQuery] bool isArchive)
         {
@@ -31,11 +31,12 @@ namespace AGROCHEM.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Wystąpił błąd podczas pobierania działek." });
+                return StatusCode(500, new { message = "Wystąpił błąd podczas pobierania roślin." });
             }
 
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> AddPlant([FromBody] PlantDTO plantDTO)
         {
@@ -57,11 +58,12 @@ namespace AGROCHEM.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Wystąpił błąd podczas pobierania działek." });
+                return StatusCode(500, new { message = "Wystąpił błąd podczas tworzenia roślin." });
             }
 
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         [Route("archive/{id}")]
         public async Task<IActionResult> ArchivePlant(int id, [FromQuery] bool archive)
@@ -91,11 +93,11 @@ namespace AGROCHEM.Controllers
             }
             catch (ApplicationException ex)
             {
-                // Złap ApplicationException wyrzucony z serwisu
                 return StatusCode(500, new { message = ex.Message });
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         [Route("{id}")]
         public async Task<IActionResult> UpdatePlant(int id, [FromBody] PlantDTO PlantDTO)
@@ -115,7 +117,6 @@ namespace AGROCHEM.Controllers
             }
             catch (ApplicationException ex)
             {
-                // Złap ApplicationException wyrzucony z serwisu
                 return StatusCode(500, new { message = ex.Message });
             }
         }

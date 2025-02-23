@@ -143,7 +143,7 @@ namespace AGROCHEM.Services
             _context.ChemicalUses.Update(chemUse);
             await _context.SaveChangesAsync();
 
-            return true; // Operacja zakończona sukcesem
+            return true; 
         }
 
         public async Task<bool> UpdateArchiveChemUse(int id, bool archive)
@@ -160,12 +160,12 @@ namespace AGROCHEM.Services
                 _context.ChemicalUses.Update(chemUse);
                 await _context.SaveChangesAsync();
 
-                return true; // Operacja zakończona sukcesem
+                return true; 
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Wystąpił błąd: {ex.Message}");
-                throw new ApplicationException("Błąd podczas archiwizacj działek", ex);
+                throw new ApplicationException("Błąd podczas archiwizacj zastosowania", ex);
             }
         }
     }
