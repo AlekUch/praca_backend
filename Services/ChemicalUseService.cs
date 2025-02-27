@@ -109,6 +109,7 @@ namespace AGROCHEM.Services
                     MinDays = chemicalUseDTO.MinDays,
                     MaxDays= chemicalUseDTO.MaxDays,
                     PlantId = chemicalUseDTO .PlantId,
+                    NumberOfTreatments = chemicalUseDTO.NumberOfTreatments,
                     Archival = false
                 };
 
@@ -139,6 +140,7 @@ namespace AGROCHEM.Services
             chemUse.MaxWater = chemicalUseDTO.MaxWater;
             chemUse.MinDays = chemicalUseDTO.MinDays;
             chemUse.MaxDays = chemicalUseDTO.MaxDays;
+            chemUse.NumberOfTreatments = chemicalUseDTO.NumberOfTreatments;
 
             _context.ChemicalUses.Update(chemUse);
             await _context.SaveChangesAsync();
