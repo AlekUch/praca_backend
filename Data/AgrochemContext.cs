@@ -69,7 +69,7 @@ public partial class AgrochemContext : DbContext
 
             entity.Property(e => e.Area).HasColumnType("decimal(6, 2)");
             entity.Property(e => e.Date).HasColumnType("datetime");
-            entity.Property(e => e.Dose).HasColumnType("decimal(6, 2)");
+            entity.Property(e => e.Dose).HasColumnType("decimal(6, 3)");
             entity.Property(e => e.Reason).HasMaxLength(255);
 
             entity.HasOne(d => d.ChemAgent).WithMany(p => p.ChemicalTreatments)
@@ -87,8 +87,8 @@ public partial class AgrochemContext : DbContext
 
             entity.ToTable("ChemicalUse", "agro_chem");
 
-            entity.Property(e => e.MaxDose).HasColumnType("decimal(3, 1)");
-            entity.Property(e => e.MinDose).HasColumnType("decimal(3, 1)");
+            entity.Property(e => e.MaxDose).HasColumnType("decimal(5, 3)");
+            entity.Property(e => e.MinDose).HasColumnType("decimal(5, 3)");
 
             entity.HasOne(d => d.ChemAgent).WithMany(p => p.ChemicalUses)
                 .HasForeignKey(d => d.ChemAgentId)
